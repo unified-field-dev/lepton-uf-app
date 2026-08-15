@@ -1,0 +1,18 @@
+[package]
+name = "lepton-mount-host"
+version = "0.1.0"
+edition = "2021"
+publish = false
+license.workspace = true
+description = "Teaching host: /user protect + /auth public + uf_app inventory matching lepton-app / lepton-auth-app"
+
+[lints]
+workspace = true
+
+[dependencies]
+axum = { version = "0.8", default-features = false, features = ["tokio", "http1", "json"] }
+http-body-util = "0.1"
+serde_json = { workspace = true }
+tokio = { workspace = true }
+tower = { version = "0.5", features = ["util"] }
+uf-product = { workspace = true, default-features = false, features = ["ssr"] }
