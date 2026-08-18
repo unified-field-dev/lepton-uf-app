@@ -10,6 +10,8 @@ export CARGO_BUILD_JOBS=1
 export CARGO_TARGET_DIR=target-lepton-uf-app
 ```
 
+This workspace pins `rust-toolchain.toml` to `nightly` (Leptos `nightly` features + Orbital). Use that channel for the commands below.
+
 ## Gates
 
 ```bash
