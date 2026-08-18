@@ -54,6 +54,8 @@
 //!
 //! Surface contracts: `tests/product_surface.rs`, `tests/shell_step_up_surface.rs`.
 
+#![deny(clippy::missing_errors_doc)]
+
 use lepton_auth::paths::{USER_ACCOUNT_SETTINGS, USER_PROFILE};
 use lepton_auth_ui::{
     provide_step_up_controller, AuthDialog, AuthDialogCallbacks, AuthDialogKind, StepUpDialog,

@@ -1,6 +1,7 @@
 #![recursion_limit = "256"]
 #![allow(missing_docs)] // uf_app! / routes macros emit undocumented associated items
 #![allow(clippy::too_long_first_doc_paragraph)]
+#![deny(clippy::missing_errors_doc)]
 //! `/auth` authentication routes and pages for Unified Field hosts.
 //!
 //! Registers sign-in, sign-up, logout, password reset, and OAuth callback pages under
