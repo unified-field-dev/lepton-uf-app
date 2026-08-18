@@ -26,7 +26,7 @@ Depends on [lepton](https://github.com/unified-field-dev/lepton) (`lepton-auth`,
 | [`lepton-auth-app`](lepton-auth-app/) | `/auth` sign-in, sign-up, logout, password reset, OAuth callback |
 | [`lepton-uf-app-e2e`](lepton-uf-app-e2e/) | Leptos host + Playwright that mounts all three on `:3140` |
 
-Crate-root rustdoc owns Concern → API tables and route maps. Start at `cargo doc -p lepton-shell --features ssr --open`, then open `lepton-app` / `lepton-auth-app`.
+Crate-root rustdoc documents Concern → API tables and route maps. Start at `cargo doc -p lepton-shell --features ssr --open`, then open `lepton-app` / `lepton-auth-app`.
 
 ## Mount on a host
 
@@ -87,7 +87,7 @@ Env for OAuth / public URLs follows lepton (`UF_PUBLIC_BASE_URL`, `UF_OAUTH_*`, 
 | Level | Where | When to use |
 |-------|--------|-------------|
 | Highlight | Mount snippet above; crate-root Getting started on each package | Confirm route children + `provide_shell_auth_menu` |
-| Mid | [`lepton-mount-host`](examples/lepton-mount-host/) | Path/auth/inventory **contract smoke** (Axum oneshot; does not compile lepton UI) |
+| Mid | [`lepton-mount-host`](examples/lepton-mount-host/) | Path/auth/inventory **contract smoke** (Axum oneshot; does not compile or mount lepton UI crates) |
 | Detailed | [`lepton-uf-app-e2e`](lepton-uf-app-e2e/) | Real Leptos mount of all three crates + Playwright; kit for deferred domain matrices |
 
 ```bash
@@ -143,7 +143,7 @@ See [`docs/VERIFICATION.md`](docs/VERIFICATION.md) for product e2e and leptos-li
 
 **Is this a runnable host?** The product crates are mountable libraries. Contract smoke: `cargo run -p lepton-mount-host`. Full Leptos mount in this repo: `lepton-uf-app-e2e`. A product binary still needs session chrome and `provide_auth_services`.
 
-**Where does identity logic live?** In lepton (`lepton-auth` / higgs). These crates own Orbital UI and `uf_app!` route registration.
+**Where does identity logic live?** In lepton (`lepton-auth` / higgs). These crates ship Orbital UI and `uf_app!` route registration atop that contract.
 
 ## License
 

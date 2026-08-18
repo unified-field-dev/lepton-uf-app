@@ -1,35 +1,25 @@
-//! Auth app-bar menu for composition into `uf_integrations::ShellAuthMenu`.
+//! App-bar authentication menu, auth dialogs, and step-up for Unified Field hosts.
 //!
 //! [`AppBarUserMenu`] renders the signed-in/anonymous avatar menu (profile, account
 //! settings, sign-in/up, logout), hosts `lepton_auth_ui::AuthDialog`, and mounts
 //! `lepton_auth_ui::StepUpDialog` with a `lepton_auth_ui::StepUpController`.
-//!
 //! Reads `uf_product::use_auth_context` for session state and an optional
 //! `uf_product::AuthDialogController` from context so route gates elsewhere in the host
-//! can open the same dialog. Host wiring: call
-//! `uf_integrations::provide_shell_auth_menu` with [`AppBarUserMenu`], and mount
-//! `lepton-app` / `lepton-auth-app` route children. Workspace overview: crate README
-//! at the `lepton-uf-app` root.
+//! can open the same dialog.
 //!
-//! **Owns:** avatar menu chrome, dialog mount points, step-up controller provision.
-//! **Does not own:** `/user` pages (`lepton-app`), `/auth` routes (`lepton-auth-app`),
-//! or identity/session backends (`lepton-auth` / higgs).
-//!
-//! ## Organized by task
-//!
-//! | Task | Start here |
-//! |------|------------|
-//! | App-bar auth menu | [`AppBarUserMenu`] |
-//! | Open sign-in / sign-up from a route gate | `uf_product::AuthDialogController` from `UnifiedFieldShellLayout` (same dialog as the menu — do not invent a second controller) |
-//! | Step-up before a sensitive mutation | `lepton_auth_ui::StepUpController` (dialog mounted here) |
+//! Call `uf_integrations::provide_shell_auth_menu` with [`AppBarUserMenu`], then mount
+//! `lepton_app::UserAppRoutes` and `lepton_auth_app::LeptonAuthRoutes` under the host
+//! `Router`. Session and identity backends live in **lepton-auth** / **higgs**. Workspace
+//! overview: crate README at the `lepton-uf-app` root.
 //!
 //! ## Concern → API
 //!
 //! | Concern | API |
 //! |---------|-----|
-//! | Avatar menu + `AuthDialog` | [`AppBarUserMenu`] |
+//! | App-bar auth menu + `AuthDialog` | [`AppBarUserMenu`] |
+//! | Open sign-in / sign-up from a route gate | `uf_product::AuthDialogController` from `UnifiedFieldShellLayout` (same dialog as the menu — do not invent a second controller) |
+//! | Step-up before a sensitive mutation | `lepton_auth_ui::StepUpController` (dialog mounted via [`AppBarUserMenu`]) |
 //! | Post-auth navigate hardening | [`sanitize_post_auth_navigate_path`], [`retain_frozen_post_auth_referer`] |
-//! | Step-up dialog mount | `lepton_auth_ui::StepUpDialog` (via [`AppBarUserMenu`]) |
 //! | Compact app-bar extras | `uf_product::use_app_bar_menu_extras` / `AppBarCompactMenuExtras` |
 //! | Session / dialog control | `uf_product::use_auth_context` / `AuthDialogController` |
 //!
@@ -53,9 +43,16 @@
 //! ```
 //!
 //! Pair with `lepton_app::UserAppRoutes` and `lepton_auth_app::LeptonAuthRoutes`.
-//! Full Leptos mount: workspace `lepton-uf-app-e2e`. Path/auth inventory smoke:
-//! `examples/lepton-mount-host`. Surface contracts: `tests/product_surface.rs`,
-//! `tests/shell_step_up_surface.rs`.
+//!
+//! ## Examples
+//!
+//! | Level | Where |
+//! |-------|--------|
+//! | Highlight | Getting started snippet above |
+//! | Mid | [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host) (path/auth/inventory smoke; Axum oneshot, no Leptos UI or menu mount) |
+//! | Detailed | workspace [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e) (real mount of all three crates + Playwright) |
+//!
+//! Surface contracts: `tests/product_surface.rs`, `tests/shell_step_up_surface.rs`.
 
 use lepton_auth::paths::{USER_ACCOUNT_SETTINGS, USER_PROFILE};
 use lepton_auth_ui::{
@@ -89,6 +86,14 @@ pub use navigate_path::{retain_frozen_post_auth_referer, sanitize_post_auth_navi
 /// controller is in context, this menu provides one for its own `AuthDialog` —
 /// never a disconnected `Default` handle that leaves the gate talking to a
 /// different signal.
+///
+/// # Examples
+///
+/// | Level | Where |
+/// |-------|--------|
+/// | Highlight | crate-root Getting started snippet |
+/// | Mid | [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host) (inventory JSON names `AppBarUserMenu`; does not compile or mount this component) |
+/// | Detailed | workspace [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e) (`provide_shell_auth_menu` + Playwright avatar menu) |
 #[component]
 pub fn AppBarUserMenu() -> impl IntoView {
     let navigate = use_navigate();

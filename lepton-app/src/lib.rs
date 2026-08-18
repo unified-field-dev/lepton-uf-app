@@ -1,20 +1,19 @@
 #![recursion_limit = "256"]
 #![allow(missing_docs)] // uf_app! / routes macros emit undocumented associated items
 #![allow(clippy::too_long_first_doc_paragraph)]
-//! User settings app routes and UI composition (lepton/higgs; Orbital is UI-only).
+//! `/user` settings routes and pages for Unified Field hosts.
 //!
-//! Mount via the host `uf-product` registry under `/user`. Pair with
-//! `lepton_shell::AppBarUserMenu` and `lepton_auth_app::LeptonAuthRoutes`.
-//! Workspace overview: crate README at the `lepton-uf-app` root.
-//!
-//! **Owns:** `/user` pages (profile, appearance, account settings, confirm-account).
-//! **Does not own:** session/backends (`lepton-auth` / higgs), `/auth` routes
-//! (`lepton-auth-app`), or app-bar chrome (`lepton-shell`).
+//! Registers profile, appearance, account settings, and confirm-account under `/user`
+//! via [`UserAppRoutes`]. Account mutations call **lepton-auth** server actions; Orbital
+//! supplies layout chrome only. Mount with `lepton_shell::AppBarUserMenu` and
+//! `lepton_auth_app::LeptonAuthRoutes`. Workspace overview: crate README at the
+//! `lepton-uf-app` root.
 //!
 //! ## Concern → API
 //!
 //! | Concern | Start here | Server / kit |
 //! |---------|------------|--------------|
+//! | Register `/user` routes | [`UserAppRoutes`] | `uf_app!` id `lepton-app` |
 //! | Profile / photo | [`ProfilePage`] | [`get_my_profile`] / [`update_my_profile`] → [`ProfileData`] |
 //! | Appearance | [`AppearancePage`] | `uf-product` / `orbital-theme` |
 //! | Account settings shell | [`AccountSettingsPage`] | `lepton_auth::actions::account` |
@@ -23,20 +22,10 @@
 //! | Devices / passkeys | [`SecurityDevicesSection`] | `lepton_auth::actions::devices` |
 //! | Owner wipe | `wipe_section` (private; composed by [`AccountSettingsPage`]) | `lepton_auth::actions::account::WipeAccount` |
 //! | Soft confirm funnel | [`ConfirmAccountPage`] | `lepton_auth_ui::ConfirmAccountPage` |
+//! | WASM chunk prefetch | [`prefetch_family`] | `lazy_routes` (`ProfileRoute::preload` and siblings) |
 //! | `/user/*` path constants | [`paths`] | generated beside [`UserAppRoutes`] |
 //!
 //! Profile and account mutations return `ServerFnError` at the Leptos boundary.
-//!
-//! ## Organized by task
-//!
-//! | Task | Start here |
-//! |------|------------|
-//! | Register `/user` routes | [`UserAppRoutes`] (`uf_app!` id `lepton-app`) |
-//! | Navigate to a `/user` leaf | [`paths`] (`PROFILE`, `APPEARANCE`, `ACCOUNT_SETTINGS`, and siblings) |
-//! | Profile / photo | [`ProfilePage`] / [`ProfileData`] |
-//! | Appearance preferences | [`AppearancePage`] |
-//! | Account settings (TOTP, OAuth, devices, wipe) | [`AccountSettingsPage`] |
-//! | Soft confirm funnel | [`ConfirmAccountPage`] |
 //!
 //! ## Getting started
 //!
@@ -65,6 +54,15 @@
 //! OAuth link CTAs need `oauth-google` / `oauth-github` on this crate (and matching
 //! hydrate features).
 //!
+//! ## Features
+//!
+//! | Feature | Effect |
+//! |---------|--------|
+//! | `webauthn` | Shows Add passkey UI in [`SecurityDevicesSection`]; host must also enable `lepton-auth/webauthn` on SSR (not hydrate). |
+//! | `oauth-google` | Google link CTAs in [`ConnectedAccountsSection`] and matching `lepton-auth-ui` OAuth buttons. |
+//! | `oauth-github` | GitHub link CTAs in [`ConnectedAccountsSection`] and matching `lepton-auth-ui` OAuth buttons. |
+//! | `hydrate` / `ssr` | Standard Leptos client/server split for this crate and its uf-product / lepton-auth deps. |
+//!
 //! ## Pages
 //!
 //! | Path | Page | Module (private) |
@@ -84,8 +82,8 @@
 //! | Level | Where |
 //! |-------|--------|
 //! | Highlight | Getting started snippet above |
-//! | Mid | `examples/lepton-mount-host` (path/auth/inventory smoke; no Leptos UI) |
-//! | Detailed | workspace `lepton-uf-app-e2e` (real mount + Playwright); kit for deferred domain matrices |
+//! | Mid | [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host) (path protect + inventory smoke; Axum oneshot, no lazy WASM chunks) |
+//! | Detailed | workspace [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e) (lazy routes + Playwright); kit for deferred domain matrices |
 
 use leptos::prelude::*;
 use leptos_router::{components::*, path, Lazy};
@@ -125,7 +123,7 @@ uf_app! {
     id: "lepton-app",
     description: "User profile and account settings",
     icon: "👤",
-    version: "0.1.0",
+    version: "0.2.0",
     routes: UserAppRoutes,
     route_path: "/user/account-settings",
 }
@@ -136,6 +134,14 @@ uf_app! {
 /// with `lepton_shell::AppBarUserMenu` via `uf_integrations::provide_shell_auth_menu`.
 /// Leaf path constants live in [`paths`] (`PROFILE`, `APPEARANCE`,
 /// `ACCOUNT_SETTINGS`, `CONFIRM_ACCOUNT`).
+///
+/// # Examples
+///
+/// | Level | Where |
+/// |-------|--------|
+/// | Highlight | crate-root Getting started snippet |
+/// | Mid | [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host) (asserts `/user` protect + `uf_app!` id; no route tree compile) |
+/// | Detailed | workspace [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e) (`Lazy::<ProfileRoute>` family + Playwright) |
 #[orbital_macros::orbital_routes_extract]
 #[component(transparent)]
 pub fn UserAppRoutes() -> impl leptos_router::MatchNestedRoutes + Clone {

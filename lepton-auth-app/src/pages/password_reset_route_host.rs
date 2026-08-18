@@ -12,6 +12,10 @@ use leptos_router::hooks::{use_location, use_navigate};
 use crate::pages::AuthPageShell;
 
 /// Shared wrapper for `/auth/reset/request` and `/auth/reset/confirm` routes.
+///
+/// Sanitizes `referer` from the query string (falls back to sign-in when `/`) and
+/// navigates back on close. Re-reads `location.search` on each navigation (no referer
+/// freeze unlike [`AuthRouteHost`]).
 #[component]
 pub fn PasswordResetRouteHost(
     initial_kind: PasswordResetDialogKind,

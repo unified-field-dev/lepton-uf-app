@@ -2,7 +2,7 @@
 //!
 //! [`LeptonAuthRoutes`] is the uf-product registry entrypoint. The
 //! `orbital_routes_extract` attribute also emits [`paths`] (`SIGNIN`, `SIGNUP`, …)
-//! beside this module; re-exported at the crate root as `lepton_auth_app::paths`.
+//! beside this module; path constants are also published as `lepton_auth_app::paths`.
 
 use leptos::prelude::*;
 use leptos_router::components::{Outlet, ParentRoute, Redirect, Route};

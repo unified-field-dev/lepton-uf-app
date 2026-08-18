@@ -8,6 +8,10 @@ use uf_product::use_auth_context;
 use crate::pages::AuthPageShell;
 
 /// Shared wrapper for `/auth/signin`, `/auth/signup`, and `/auth/logout` routes.
+///
+/// Freezes the first specific `referer` query value (see
+/// [`lepton_shell::retain_frozen_post_auth_referer`]) and calls `trigger_refresh` on
+/// success so gated `/user/*` routes pick up the authenticated session.
 #[component]
 pub fn AuthRouteHost(initial_kind: AuthDialogKind, test_id: &'static str) -> impl IntoView {
     let navigate = use_navigate();

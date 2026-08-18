@@ -27,7 +27,7 @@ use uf_product::{
     UF_SHELL_BRAND_SEED,
 };
 
-/// Route brand seeds for [`AppearanceThemeController`] (mirrors L5 host wiring).
+/// Route brand seeds for [`AppearanceThemeController`] (mirrors deployable host wiring).
 ///
 /// Without this controller, save updates the nested preview theme but a hard refresh
 /// never re-applies prefs to the shell `ThemeInjection`.

@@ -24,6 +24,13 @@ pub const MAX_DISPLAY_NAME_CHARS: usize = 255;
 /// Validate a display name before Valence update (empty / over-long).
 ///
 /// Returns the trimmed name on success.
+///
+/// # Errors
+///
+/// Returns `Err` with a stable message when:
+///
+/// - the trimmed name is empty (`"Display name cannot be empty"`);
+/// - the trimmed name exceeds [`MAX_DISPLAY_NAME_CHARS`] (`"Display name is too long"`).
 pub fn validate_display_name(display_name: &str) -> Result<&str, &'static str> {
     let trimmed = display_name.trim();
     if trimmed.is_empty() {
