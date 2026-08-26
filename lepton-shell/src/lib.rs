@@ -1,55 +1,190 @@
 //! App-bar authentication menu, auth dialogs, and step-up for Unified Field hosts.
 //!
-//! [`AppBarUserMenu`] renders the signed-in/anonymous avatar menu (profile, account
-//! settings, sign-in/up, logout), hosts `lepton_auth_ui::AuthDialog`, and mounts
-//! `lepton_auth_ui::StepUpDialog` with a `lepton_auth_ui::StepUpController`.
-//! Reads `uf_product::use_auth_context` for session state and an optional
-//! `uf_product::AuthDialogController` from context so route gates elsewhere in the host
-//! can open the same dialog.
+//! This crate renders the signed-in avatar menu, hosts sign-in/sign-up/logout dialogs,
+//! and mounts step-up confirmation before sensitive mutations. Session state comes from
+//! `uf_product` auth context; identity backends stay in **lepton-auth** / **higgs**.
 //!
-//! Call `uf_integrations::provide_shell_auth_menu` with [`AppBarUserMenu`], then mount
-//! `lepton_app::UserAppRoutes` and `lepton_auth_app::LeptonAuthRoutes` under the host
-//! `Router`. Session and identity backends live in **lepton-auth** / **higgs**. Workspace
-//! overview: crate README at the `lepton-uf-app` root.
+//! ## Features
 //!
-//! ## Concern → API
+//! - **App-bar auth menu** — Renders the avatar dropdown with profile, account settings,
+//!   and sign-in/up actions for anonymous sessions. Wire it once at host boot through
+//!   `uf_integrations::provide_shell_auth_menu`. [Get started](#wire-auth-menu-at-boot)
+//! - **Auth dialog controller** — The menu and route gates share one `AuthDialog`
+//!   signal through `AuthDialogController`. Bind the controller from
+//!   `UnifiedFieldShellLayout` so `RequireAuthenticated` opens the same dialog as the
+//!   avatar menu. [Guide](#share-auth-dialog-with-gates)
+//! - **Step-up dialog shell** — Mounts `StepUpDialog` and provides `StepUpController` so
+//!   hosts can call `request` before a sensitive mutation. [Guide](#step-up-before-sensitive-mutation)
+//! - **Post-auth path sanitizer** — Rejects open-redirect bypasses in post-auth navigate
+//!   targets and AuthDialog referers. [Guide](#sanitize-post-auth-navigate-path)
+//! - **Frozen referer retention** — Keeps the gated path when WASM remounts rewrite the
+//!   live URL to `/auth/signin`. [Guide](#freeze-post-auth-referer)
 //!
-//! | Concern | API |
-//! |---------|-----|
-//! | App-bar auth menu + `AuthDialog` | [`AppBarUserMenu`] |
-//! | Open sign-in / sign-up from a route gate | `uf_product::AuthDialogController` from `UnifiedFieldShellLayout` (same dialog as the menu — do not invent a second controller) |
-//! | Step-up before a sensitive mutation | `lepton_auth_ui::StepUpController` (dialog mounted via [`AppBarUserMenu`]) |
-//! | Post-auth navigate hardening | [`sanitize_post_auth_navigate_path`], [`retain_frozen_post_auth_referer`] |
-//! | Compact app-bar extras | `uf_product::use_app_bar_menu_extras` / `AppBarCompactMenuExtras` |
-//! | Session / dialog control | `uf_product::use_auth_context` / `AuthDialogController` |
+//! ## Wire auth menu at boot
 //!
-//! No crate-local server functions or typed error enums: identity errors stay in
-//! **lepton-auth**; this crate is UI chrome only.
+//! The app-bar menu is the primary auth entry for signed-in and anonymous users. Call
+//! `uf_integrations::provide_shell_auth_menu` once at host boot (before routed pages
+//! mount) and pair the slot with `lepton_app::UserAppRoutes` and
+//! `lepton_auth_app::LeptonAuthRoutes` under the host `Router`.
 //!
-//! ## Step-up
+//! On SSR hosts that send verification mail, inject delivery first with
+//! [`provide_auth_services`](../lepton_auth/index.html#boot-delivery-email-only) from
+//! **lepton-auth** so sign-up and password-reset dialogs can enqueue email.
 //!
-//! [`AppBarUserMenu`] mounts `StepUpDialog` and provides `StepUpController` so hosts
-//! that call `request` before a sensitive mutation get a working dialog. Account
-//! Settings does not drive step-up today.
-//!
-//! ## Getting started
+//! **Prerequisites:** `ssr` and/or `hydrate` on this crate; `uf_product` session context
+//! from `provide_auth_context` at boot.
 //!
 //! ```rust,ignore
 //! use lepton_shell::AppBarUserMenu;
+//! use lepton_app::UserAppRoutes;
+//! use lepton_auth_app::LeptonAuthRoutes;
+//! use leptos::prelude::*;
+//! use leptos_router::components::{Router, Routes};
 //! use uf_integrations::provide_shell_auth_menu;
 //!
+//! // Once at host boot, before routed pages mount:
 //! provide_shell_auth_menu(|| view! { <AppBarUserMenu /> });
-//! // Pair with <UserAppRoutes /> and <LeptonAuthRoutes /> under the host Router.
+//!
+//! view! {
+//!     <Router>
+//!         <Routes fallback=|| view! { /* host 404 */ }>
+//!             <UserAppRoutes />
+//!             <LeptonAuthRoutes />
+//!         </Routes>
+//!     </Router>
+//! }
 //! ```
 //!
-//! Pair with `lepton_app::UserAppRoutes` and `lepton_auth_app::LeptonAuthRoutes`.
+//! On success the app bar shows the avatar menu and `AuthDialog` / `StepUpDialog` mount
+//! beside routed pages. Omit `provide_shell_auth_menu` when the host has no auth chrome.
+//!
+//! ## Share auth dialog with gates
+//!
+//! Route gates such as `uf_product::routes::RequireAuthenticated` open the same dialog
+//! as the avatar menu when you bind the `AuthDialogController` from
+//! `UnifiedFieldShellLayout`. [`AppBarUserMenu`] reuses that controller when present and
+//! only calls `provide_auth_dialog_controller` as a fallback for standalone mounts.
+//!
+//! **Prerequisites:** shell layout that provides `AuthDialogController` in Leptos context.
+//!
+//! ```rust,ignore
+//! use lepton_shell::AppBarUserMenu;
+//! use uf_product::routes::RequireAuthenticated;
+//! use uf_product::AuthDialogController;
+//! use leptos::prelude::*;
+//!
+//! #[component]
+//! fn GatedPage() -> impl IntoView {
+//!     view! {
+//!         <RequireAuthenticated permission_name="demo.read">
+//!             <p>"Secret content"</p>
+//!         </RequireAuthenticated>
+//!     }
+//! }
+//!
+//! // AppBarUserMenu reads use_context::<AuthDialogController>() and calls
+//! // controller.open_signin() from the menu or from the gate — same signal.
+//! ```
+//!
+//! When an anonymous visitor hits the gate, `RequireAuthenticated` calls
+//! `controller.open_signin()` and the menu-mounted `AuthDialog` opens. A disconnected
+//! `Default` controller would leave the gate talking to a different signal than the menu.
+//!
+//! ## Step-up before sensitive mutation
+//!
+//! [`AppBarUserMenu`] mounts `StepUpDialog` and provides `StepUpController` when the
+//! host has not already installed one. Sensitive server actions (account wipe, TOTP
+//! disable, OAuth unlink) call `StepUpController::request` before proceeding; the dialog
+//! collects a second factor and resumes the action on success. Account Settings does
+//! not drive step-up today — hosts wire `request` on the mutations they protect.
+//!
+//! **Prerequisites:** `lepton-auth-ui` step-up feature on the SSR graph; session context
+//! from `uf_product`.
+//!
+//! ```rust,ignore
+//! use lepton_auth_ui::{provide_step_up_controller, StepUpController};
+//! use leptos::prelude::*;
+//!
+//! #[component]
+//! fn SensitiveAction() -> impl IntoView {
+//!     // AppBarUserMenu calls provide_step_up_controller when none is in context.
+//!     let step_up = use_context::<StepUpController>().expect("AppBarUserMenu mounts this");
+//!     let open = step_up.open();
+//!     view! {
+//!         <button on:click=move |_| {
+//!             step_up.request("wipe_account", move || {
+//!                 // run server action after step-up succeeds
+//!             });
+//!         }>
+//!             "Wipe account"
+//!         </button>
+//!         <p>{move || if open().get() { "Step-up open" } else { "Idle" }}</p>
+//!     }
+//! }
+//! ```
+//!
+//! On success `open().get()` becomes true while the dialog collects the factor; the
+//! callback runs after verification. Missing `StepUpController` context means the host
+//! forgot to mount [`AppBarUserMenu`] or `provide_step_up_controller`.
+//!
+//! ## Sanitize post-auth navigate path
+//!
+//! [`sanitize_post_auth_navigate_path`] wraps `lepton_auth::routes::sanitize_referer_path`
+//! and rejects additional open-redirect bypasses (control characters, `://` smuggling,
+//! backslashes) before AuthDialog referers or post-auth navigations run.
+//!
+//! **Prerequisites:** none beyond the helper import.
+//!
+//! ```rust
+//! use lepton_shell::sanitize_post_auth_navigate_path;
+//!
+//! assert_eq!(
+//!     sanitize_post_auth_navigate_path(Some("/user/profile".to_string())),
+//!     "/user/profile"
+//! );
+//! assert_eq!(
+//!     sanitize_post_auth_navigate_path(Some("//evil.example".to_string())),
+//!     "/"
+//! );
+//! ```
+//!
+//! Safe in-app paths (including query strings) pass through; protocol-relative and
+//! smuggled URLs fall back to `"/"`. [`AppBarUserMenu`] snapshots the sanitized path when
+//! the auth dialog opens.
+//!
+//! ## Freeze post-auth referer
+//!
+//! [`retain_frozen_post_auth_referer`] keeps the first gated path when a later read
+//! sanitizes to `"/"`. WASM remounts can rewrite the live URL to `/auth/signin` after the
+//! user started on a product route such as `/tag`; freezing prevents dropping the return
+//! target. `lepton_auth_app` route hosts use the same helper — see their
+//! [Route hosts](../lepton_auth_app/index.html#route-hosts) section.
+//!
+//! **Prerequisites:** capture the frozen path when the dialog or auth page first opens.
+//!
+//! ```rust
+//! use lepton_shell::retain_frozen_post_auth_referer;
+//!
+//! assert_eq!(retain_frozen_post_auth_referer("/tag", "/auth/signin"), "/tag");
+//! assert_eq!(retain_frozen_post_auth_referer("/", "/gate/auth-required"), "/gate/auth-required");
+//! ```
+//!
+//! When `frozen` is not `"/"`, the frozen value wins; otherwise the incoming path is
+//! sanitized through [`sanitize_post_auth_navigate_path`].
+//!
+//! ## Feature flags
+//!
+//! | Flag | Effect |
+//! |------|--------|
+//! | `hydrate` | Client-side Leptos split for this crate and `uf-product` / `lepton-auth-ui` deps. |
+//! | `ssr` | Server-side Leptos split; required for auth server fns behind the dialogs. |
 //!
 //! ## Examples
 //!
 //! | Level | Where |
 //! |-------|--------|
-//! | Highlight | Getting started snippet above |
-//! | Mid | [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host) (path/auth/inventory smoke; Axum oneshot, no Leptos UI or menu mount) |
+//! | Highlight | [Wire auth menu at boot](#wire-auth-menu-at-boot) |
+//! | Mid | [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host) (path/auth/inventory smoke; Axum oneshot, no Leptos UI mount) |
 //! | Detailed | workspace [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e) (real mount of all three crates + Playwright) |
 //!
 //! Surface contracts: `tests/product_surface.rs`, `tests/shell_step_up_surface.rs`.
@@ -79,8 +214,8 @@ pub use navigate_path::{retain_frozen_post_auth_referer, sanitize_post_auth_navi
 
 /// Signed-in/anonymous avatar menu for the host app bar.
 ///
-/// Call from `uf_integrations::provide_shell_auth_menu` (preferred) or nest under
-/// `ShellAuthMenu`. Pair with `lepton_app::UserAppRoutes` and
+/// Prefer [`crate`] [Wire auth menu at boot](index.html#wire-auth-menu-at-boot) via
+/// `uf_integrations::provide_shell_auth_menu`. Pair with `lepton_app::UserAppRoutes` and
 /// `lepton_auth_app::LeptonAuthRoutes`. Requires `uf_product` auth context.
 ///
 /// Bind the [`AuthDialogController`] from `UnifiedFieldShellLayout` when present so
@@ -93,7 +228,7 @@ pub use navigate_path::{retain_frozen_post_auth_referer, sanitize_post_auth_navi
 ///
 /// | Level | Where |
 /// |-------|--------|
-/// | Highlight | crate-root Getting started snippet |
+/// | Highlight | crate-root [Wire auth menu at boot](index.html#wire-auth-menu-at-boot) |
 /// | Mid | [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host) (inventory JSON names `AppBarUserMenu`; does not compile or mount this component) |
 /// | Detailed | workspace [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e) (`provide_shell_auth_menu` + Playwright avatar menu) |
 #[component]

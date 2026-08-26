@@ -8,6 +8,7 @@ use lepton_auth::routes::sanitize_referer_path;
 
 /// Sanitize a post-auth redirect / AuthDialog referer for in-app navigation.
 ///
+/// See the crate guide [Sanitize post-auth navigate path](index.html#sanitize-post-auth-navigate-path).
 /// Invalid values fall back to `"/"`.
 #[must_use]
 pub fn sanitize_post_auth_navigate_path(referer: Option<String>) -> String {
@@ -21,6 +22,7 @@ pub fn sanitize_post_auth_navigate_path(referer: Option<String>) -> String {
 
 /// Keep a captured in-app path when a later read sanitizes to `"/"`.
 ///
+/// See the crate guide [Freeze post-auth referer](index.html#freeze-post-auth-referer).
 /// Split WASM remounts the hidden `referer` field, and the live URL can become
 /// `/auth/signin` (rejected by sanitize) after the user started on a gated
 /// product route such as `/tag`.
