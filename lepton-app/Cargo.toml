@@ -1,0 +1,78 @@
+[package]
+name = "lepton-app"
+version = "0.2.0"
+edition = "2021"
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+description = "User profile and account settings surfaces for Lepton hosts"
+
+[dependencies]
+leptos = { workspace = true }
+leptos_meta = { workspace = true }
+leptos_router = { workspace = true }
+leptos_axum = { workspace = true, optional = true }
+icondata = { workspace = true }
+icondata_core = { workspace = true }
+http = { workspace = true }
+url = { workspace = true }
+cfg-if = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+valence = { workspace = true, optional = true }
+chrono = { workspace = true, optional = true }
+higgs = { workspace = true, optional = true }
+
+uf-product = { workspace = true, default-features = false }
+uf-integrations = { workspace = true, default-features = false }
+uf-product-macros = { workspace = true }
+lepton-auth = { workspace = true, default-features = false }
+lepton-auth-ui = { workspace = true, default-features = false }
+lepton-shell = { workspace = true, default-features = false }
+lepton-identity = { workspace = true, optional = true }
+orbital-base-components = { workspace = true }
+orbital-theme = { workspace = true, default-features = false }
+orbital-macros = { workspace = true }
+
+wasm-bindgen = { workspace = true }
+wasm-bindgen-futures = { workspace = true }
+web-sys = { workspace = true, features = ["Window", "Navigator", "Clipboard"] }
+js-sys = { workspace = true }
+
+[lints]
+workspace = true
+
+[features]
+default = []
+# Shows Add passkey UI; host must enable `lepton-auth/webauthn` on SSR (not hydrate).
+webauthn = []
+# Gates Google link CTAs in ConnectedAccountsSection (+ auth-ui OAuth buttons).
+oauth-google = ["lepton-auth/oauth-google", "lepton-auth-ui/oauth-google"]
+# Gates GitHub link CTAs in ConnectedAccountsSection (+ auth-ui OAuth buttons).
+oauth-github = ["lepton-auth/oauth-github", "lepton-auth-ui/oauth-github"]
+hydrate = [
+    "leptos/hydrate",
+    "uf-product/hydrate",
+    "uf-integrations/hydrate",
+    "lepton-auth/hydrate",
+    "lepton-auth-ui/hydrate",
+    "lepton-shell/hydrate",
+    "orbital-theme/hydrate"]
+ssr = [
+    "leptos/ssr",
+    "leptos_meta/ssr",
+    "leptos_router/ssr",
+    "dep:leptos_axum",
+    "dep:valence",
+    "dep:chrono",
+    "dep:higgs",
+    "dep:lepton-identity",
+    "higgs/ssr",
+    "uf-product/ssr",
+    "uf-integrations/ssr",
+    "lepton-auth/ssr",
+    "lepton-auth/totp",
+    "lepton-auth-ui/ssr",
+    "lepton-shell/ssr"]

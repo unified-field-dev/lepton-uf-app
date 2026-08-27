@@ -1,0 +1,8 @@
+/target
+/target-lepton-uf-app
+/target-lepton-uf-app-doc
+**/node_modules/
+**/test-results/
+**/playwright-report/
+lepton-uf-app-e2e/site/
+uploads/
