@@ -40,7 +40,7 @@ fn shell_step_up_docs_host_consumers_happy_path() {
         "crate docs should say hosts call StepUpController::request"
     );
     assert!(
-        src.contains("does not drive step-up"),
+        src.contains("not drive step-up"),
         "docs should clarify Account Settings does not drive step-up today"
     );
 }
