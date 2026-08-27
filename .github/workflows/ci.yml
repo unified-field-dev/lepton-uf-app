@@ -1,6 +1,9 @@
 # PR / merge gate aligned with docs/VERIFICATION.md.
 # Path deps assume a Unified Field monorepo layout; CI checks this repo out
 # under that path and shallow-clones siblings.
+#
+# Pull requests: `pull_request` runs for branches on unified-field-dev/lepton-uf-app.
+# Fork PRs need a same-repo branch on uf-dev or fork-workflow approval in Settings.
 name: CI
 
 on:
