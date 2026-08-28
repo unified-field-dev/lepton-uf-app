@@ -84,11 +84,8 @@ Env for OAuth / public URLs follows lepton (`UF_PUBLIC_BASE_URL`, `UF_OAUTH_*`, 
 
 ## Examples
 
-| Level | Where | When to use |
-|-------|--------|-------------|
-| Highlight | Mount snippet above; crate-root Getting started on each package | Confirm route children + `provide_shell_auth_menu` |
-| Mid | [`lepton-mount-host`](examples/lepton-mount-host/) | Path/auth/inventory **contract smoke** (Axum oneshot; does not compile or mount lepton UI crates) |
-| Detailed | [`lepton-uf-app-e2e`](lepton-uf-app-e2e/) | Real Leptos mount of all three crates + Playwright; kit for deferred domain matrices |
+- [`lepton-mount-host`](examples/lepton-mount-host/) — path/auth/inventory contract smoke (Axum oneshot; does not compile or mount lepton UI crates)
+- [`lepton-uf-app-e2e`](lepton-uf-app-e2e/) — real Leptos mount of all three crates + Playwright
 
 ```bash
 export CARGO_BUILD_JOBS=1

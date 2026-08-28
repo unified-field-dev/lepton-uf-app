@@ -173,11 +173,11 @@
 //!
 //! ## Examples
 //!
-//! | Level | Where |
-//! |-------|--------|
-//! | Highlight | [Mount auth routes](#mount-auth-routes) |
-//! | Mid | [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host) (public `/auth` inventory smoke; Axum oneshot, no auth page mount) |
-//! | Detailed | workspace [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e) (eager auth pages + Playwright); kit for deferred auth matrices |
+//! Start with [Mount auth routes](#mount-auth-routes). Public `/auth` inventory smoke
+//! (Axum oneshot, no auth page mount):
+//! [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host).
+//! Eager auth pages + Playwright; kit for deferred auth matrices: workspace
+//! [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e).
 
 use uf_product_macros::uf_app;
 

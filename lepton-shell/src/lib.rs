@@ -181,11 +181,11 @@
 //!
 //! ## Examples
 //!
-//! | Level | Where |
-//! |-------|--------|
-//! | Highlight | [Wire auth menu at boot](#wire-auth-menu-at-boot) |
-//! | Mid | [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host) (path/auth/inventory smoke; Axum oneshot, no Leptos UI mount) |
-//! | Detailed | workspace [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e) (real mount of all three crates + Playwright) |
+//! Start with [Wire auth menu at boot](#wire-auth-menu-at-boot). Path/auth/inventory smoke
+//! (Axum oneshot, no Leptos UI mount):
+//! [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host).
+//! Real mount of all three crates + Playwright: workspace
+//! [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e).
 //!
 //! Surface contracts: `tests/product_surface.rs`, `tests/shell_step_up_surface.rs`.
 
@@ -226,11 +226,11 @@ pub use navigate_path::{retain_frozen_post_auth_referer, sanitize_post_auth_navi
 ///
 /// # Examples
 ///
-/// | Level | Where |
-/// |-------|--------|
-/// | Highlight | crate-root [Wire auth menu at boot](index.html#wire-auth-menu-at-boot) |
-/// | Mid | [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host) (inventory JSON names `AppBarUserMenu`; does not compile or mount this component) |
-/// | Detailed | workspace [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e) (`provide_shell_auth_menu` + Playwright avatar menu) |
+/// Start with crate-root [Wire auth menu at boot](index.html#wire-auth-menu-at-boot).
+/// [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host)
+/// inventory JSON names `AppBarUserMenu` (does not compile or mount this component).
+/// Workspace [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e)
+/// (`provide_shell_auth_menu` + Playwright avatar menu).
 #[component]
 pub fn AppBarUserMenu() -> impl IntoView {
     let navigate = use_navigate();

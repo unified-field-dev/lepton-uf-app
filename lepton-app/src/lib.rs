@@ -223,11 +223,11 @@
 //!
 //! ## Examples
 //!
-//! | Level | Where |
-//! |-------|--------|
-//! | Highlight | [Mount user routes](#mount-user-routes) |
-//! | Mid | [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host) (path protect + inventory smoke; Axum oneshot, no lazy WASM chunks) |
-//! | Detailed | workspace [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e) (lazy routes + Playwright); kit for deferred domain matrices |
+//! Start with [Mount user routes](#mount-user-routes). Path protect + inventory smoke
+//! (Axum oneshot, no lazy WASM chunks):
+//! [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host).
+//! Lazy routes + Playwright; kit for deferred domain matrices: workspace
+//! [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e).
 
 use leptos::prelude::*;
 use leptos_router::{components::*, path, Lazy};
@@ -281,11 +281,11 @@ uf_app! {
 ///
 /// # Examples
 ///
-/// | Level | Where |
-/// |-------|--------|
-/// | Highlight | crate-root [Mount user routes](crate#mount-user-routes) |
-/// | Mid | [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host) (asserts `/user` protect + `uf_app!` id; no route tree compile) |
-/// | Detailed | workspace [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e) (`Lazy::<ProfileRoute>` family + Playwright) |
+/// Start with crate-root [Mount user routes](crate#mount-user-routes).
+/// [`examples/lepton-mount-host`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/examples/lepton-mount-host)
+/// asserts `/user` protect + `uf_app!` id (no route tree compile). Workspace
+/// [`lepton-uf-app-e2e`](https://github.com/unified-field-dev/lepton-uf-app/tree/main/lepton-uf-app-e2e)
+/// (`Lazy::<ProfileRoute>` family + Playwright).
 #[orbital_macros::orbital_routes_extract]
 #[component(transparent)]
 pub fn UserAppRoutes() -> impl leptos_router::MatchNestedRoutes + Clone {
