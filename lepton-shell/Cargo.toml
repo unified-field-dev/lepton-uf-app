@@ -17,6 +17,8 @@ lepton-auth-ui = { workspace = true, default-features = false }
 orbital-base-components = { workspace = true }
 orbital-primitives = { workspace = true, default-features = false }
 uf-product = { workspace = true, default-features = false }
+# Force crc32fast 1.5.0 through the dylint graph (see workspace pin).
+crc32fast = { workspace = true }
 
 [lints]
 workspace = true

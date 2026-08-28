@@ -147,6 +147,8 @@ lepton-app = { path = "lepton-app" }
 icondata = { version = "0.4.0", default-features = false, features = ["ant-design-icons", "box-icons", "lucide"] }
 icondata_core = "0.1.0"
 turf = "0.10"
+# leptos-lints nightly-2025-05-14 fails on crc32fast 1.5.1 (unstable avx512 features).
+crc32fast = "=1.5.0"
 wasm-bindgen = "=0.2.126"
 web-sys = { version = "=0.3.103", features = ["HtmlElement", "DomRect", "Element", "Node", "Document", "File", "FileList", "FormData", "HtmlInputElement", "Request", "RequestInit", "Response", "Headers", "Window"] }
 wasm-bindgen-futures = "0.4"
