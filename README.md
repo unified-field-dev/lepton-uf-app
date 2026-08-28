@@ -3,7 +3,7 @@
 [![CI](https://github.com/unified-field-dev/lepton-uf-app/actions/workflows/ci.yml/badge.svg)](https://github.com/unified-field-dev/lepton-uf-app/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-[GitHub](https://github.com/unified-field-dev/lepton-uf-app) · `cargo doc -p lepton-shell --features ssr --open` · distributed via git (not crates.io)
+[GitHub](https://github.com/unified-field-dev/lepton-uf-app) · `cargo doc -p lepton-shell --features ssr --open`
 
 Product UI for Lepton on Unified Field hosts: shell avatar menu, `/user` settings, and `/auth` routes. This repository is a set of mountable crates, not a standalone host binary.
 
