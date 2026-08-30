@@ -173,11 +173,3 @@ password-hash = "0.5"
 rand_core = { version = "0.6", features = ["std"] }
 chrono = { version = "0.4", features = ["serde"] }
 
-[patch."https://github.com/unified-field-dev/valence"]
-uf-valence = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
-uf-valence-codegen = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
-uf-valence-core = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
-
-# uf-product pins deathbreakfast/higgs, the lepton kit pins unified-field-dev/higgs,
-# and this workspace uses the local tree. Without one graph, `HiggsValenceFactory`
-# from `higgs` and from `lepton_host_adapter::Backend::new` are different traits.
