@@ -109,37 +109,37 @@ leptos_router = { version = "0.8", default-features = false, features = ["nightl
 leptos_axum = { version = "0.8", default-features = false }
 
 # crates.io — must match uf-product / lepton kit so Handler/Theme are one type.
-orbital-zone-a = { package = "orbital-ui", version = "0.1.4", default-features = false }
-orbital-macros = { version = "0.1.5" }
-orbital-shell = { version = "0.1.4", default-features = false }
-orbital-core-components = { version = "0.1.4" }
-orbital-base-components = { version = "0.1.4" }
-orbital-primitives = { version = "0.1.4", default-features = false }
-orbital-motion = { version = "0.1.4", default-features = false }
-orbital-theme = { version = "0.1.4", default-features = false }
+orbital-zone-a = { package = "orbital-ui", git = "https://github.com/unified-field-dev/orbital", branch = "main", default-features = false }
+orbital-macros = { git = "https://github.com/unified-field-dev/orbital", branch = "main" }
+orbital-shell = { git = "https://github.com/unified-field-dev/orbital", branch = "main", default-features = false }
+orbital-core-components = { git = "https://github.com/unified-field-dev/orbital", branch = "main" }
+orbital-base-components = { git = "https://github.com/unified-field-dev/orbital", branch = "main" }
+orbital-primitives = { git = "https://github.com/unified-field-dev/orbital", branch = "main", default-features = false }
+orbital-motion = { git = "https://github.com/unified-field-dev/orbital", branch = "main", default-features = false }
+orbital-theme = { git = "https://github.com/unified-field-dev/orbital", branch = "main", default-features = false }
 
-valence = { package = "uf-valence", version = "0.1.5", default-features = false, features = ["mem", "sqlite"] }
-valence-codegen = { package = "uf-valence-codegen", version = "0.1.5" }
-higgs = { path = "../../L1-host-stack-kits/higgs/higgs", default-features = false }
-higgs-host = { path = "../../L1-host-stack-kits/higgs/higgs-host", default-features = false }
-higgs-identity = { path = "../../L1-host-stack-kits/higgs/higgs-identity" }
+valence = { package = "uf-valence", git = "https://github.com/unified-field-dev/valence", branch = "main", default-features = false, features = ["mem", "sqlite"] }
+valence-codegen = { package = "uf-valence-codegen", git = "https://github.com/unified-field-dev/valence", branch = "main" }
+higgs = { git = "https://github.com/unified-field-dev/higgs", branch = "main", default-features = false }
+higgs-host = { git = "https://github.com/unified-field-dev/higgs", branch = "main", default-features = false }
+higgs-identity = { git = "https://github.com/unified-field-dev/higgs", branch = "main" }
 inventory = "0.3"
 
 uf-product = { path = "../unified-field-product/uf-product", default-features = false }
 uf-integrations = { path = "../unified-field-product/uf-integrations", default-features = false }
 uf-product-macros = { path = "../unified-field-product/uf-product-macros" }
 
-lepton-auth = { path = "../../L1-host-stack-kits/lepton/lepton-auth", default-features = false }
-lepton-auth-ui = { path = "../../L1-host-stack-kits/lepton/lepton-auth-ui", default-features = false }
-lepton-identity = { path = "../../L1-host-stack-kits/lepton/lepton-identity", default-features = false, features = ["db-sqlite"] }
-lepton-smtp = { path = "../../L1-host-stack-kits/lepton/lepton-smtp" }
-lepton-sms = { path = "../../L1-host-stack-kits/lepton/lepton-sms" }
-lepton-host-adapter = { path = "../../L1-host-stack-kits/lepton/lepton-host-adapter", default-features = false, features = ["db-sqlite"] }
+lepton-auth = { git = "https://github.com/unified-field-dev/lepton", branch = "main", default-features = false }
+lepton-auth-ui = { git = "https://github.com/unified-field-dev/lepton", branch = "main", default-features = false }
+lepton-identity = { git = "https://github.com/unified-field-dev/lepton", branch = "main", default-features = false, features = ["db-sqlite"] }
+lepton-smtp = { git = "https://github.com/unified-field-dev/lepton", branch = "main" }
+lepton-sms = { git = "https://github.com/unified-field-dev/lepton", branch = "main" }
+lepton-host-adapter = { git = "https://github.com/unified-field-dev/lepton", branch = "main", default-features = false, features = ["db-sqlite"] }
 # Harness-only kits for `lepton-uf-app-e2e`. `lepton-e2e` default features pull
 # `boson-delivery` onto lepton-auth, which would queue mail without a
 # DeliveryRuntime on this host.
-lepton-e2e = { path = "../../L1-host-stack-kits/lepton/lepton-e2e", default-features = false }
-lepton-test-support = { path = "../../L1-host-stack-kits/lepton/lepton-test-support", default-features = false }
+lepton-e2e = { git = "https://github.com/unified-field-dev/lepton", branch = "main", default-features = false }
+lepton-test-support = { git = "https://github.com/unified-field-dev/lepton", branch = "main", default-features = false }
 lepton-shell = { path = "lepton-shell", default-features = false }
 lepton-auth-app = { path = "lepton-auth-app" }
 lepton-app = { path = "lepton-app" }
@@ -174,53 +174,10 @@ rand_core = { version = "0.6", features = ["std"] }
 chrono = { version = "0.4", features = ["serde"] }
 
 [patch."https://github.com/unified-field-dev/valence"]
-uf-valence = { version = "0.1.5" }
-uf-valence-codegen = { version = "0.1.5" }
-uf-valence-core = { version = "0.1.5" }
+uf-valence = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
+uf-valence-codegen = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
+uf-valence-core = { git = "https://github.com/unified-field-dev/valence", branch = "main" }
 
 # uf-product pins deathbreakfast/higgs, the lepton kit pins unified-field-dev/higgs,
 # and this workspace uses the local tree. Without one graph, `HiggsValenceFactory`
 # from `higgs` and from `lepton_host_adapter::Backend::new` are different traits.
-[patch."https://github.com/deathbreakfast/higgs"]
-higgs = { path = "../../L1-host-stack-kits/higgs/higgs" }
-higgs-core = { path = "../../L1-host-stack-kits/higgs/higgs-core" }
-higgs-host = { path = "../../L1-host-stack-kits/higgs/higgs-host" }
-higgs-identity = { path = "../../L1-host-stack-kits/higgs/higgs-identity" }
-
-[patch."https://github.com/deathbreakfast/higgs.git"]
-higgs = { path = "../../L1-host-stack-kits/higgs/higgs" }
-higgs-core = { path = "../../L1-host-stack-kits/higgs/higgs-core" }
-higgs-host = { path = "../../L1-host-stack-kits/higgs/higgs-host" }
-higgs-identity = { path = "../../L1-host-stack-kits/higgs/higgs-identity" }
-
-[patch."https://github.com/unified-field-dev/higgs"]
-higgs = { path = "../../L1-host-stack-kits/higgs/higgs" }
-higgs-core = { path = "../../L1-host-stack-kits/higgs/higgs-core" }
-higgs-host = { path = "../../L1-host-stack-kits/higgs/higgs-host" }
-higgs-identity = { path = "../../L1-host-stack-kits/higgs/higgs-identity" }
-
-[patch."https://github.com/unified-field-dev/higgs.git"]
-higgs = { path = "../../L1-host-stack-kits/higgs/higgs" }
-higgs-core = { path = "../../L1-host-stack-kits/higgs/higgs-core" }
-higgs-host = { path = "../../L1-host-stack-kits/higgs/higgs-host" }
-higgs-identity = { path = "../../L1-host-stack-kits/higgs/higgs-identity" }
-
-# Operator: one crates.io Orbital graph (matches uf-product + lepton kit). Path
-# overrides keep PreviewCatalog / local L0 checkout in the monorepo.
-[patch.crates-io]
-orbital-ui = { path = "../../L0-upstream-cores/orbital/orbital" }
-orbital-macros = { path = "../../L0-upstream-cores/orbital/orbital-macros" }
-orbital-shell = { path = "../../L0-upstream-cores/orbital/orbital-shell" }
-orbital-core-components = { path = "../../L0-upstream-cores/orbital/orbital-core-components" }
-orbital-base-components = { path = "../../L0-upstream-cores/orbital/orbital-base-components" }
-orbital-primitives = { path = "../../L0-upstream-cores/orbital/orbital-primitives" }
-orbital-theme = { path = "../../L0-upstream-cores/orbital/orbital-theme" }
-orbital-paging = { path = "../../L0-upstream-cores/orbital/orbital-paging" }
-orbital-datatable = { path = "../../L0-upstream-cores/orbital/orbital-datatable" }
-orbital-date-pickers = { path = "../../L0-upstream-cores/orbital/orbital-date-pickers" }
-orbital-charts = { path = "../../L0-upstream-cores/orbital/orbital-charts" }
-orbital-tree = { path = "../../L0-upstream-cores/orbital/orbital-tree" }
-orbital-scheduler = { path = "../../L0-upstream-cores/orbital/orbital-scheduler" }
-orbital-motion = { path = "../../L0-upstream-cores/orbital/orbital-motion" }
-orbital-style = { path = "../../L0-upstream-cores/orbital/orbital-style" }
-orbital-data = { path = "../../L0-upstream-cores/orbital/orbital-data" }
