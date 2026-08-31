@@ -1,0 +1,95 @@
+[package]
+name = "lepton-auth-app"
+version = "0.2.0"
+edition = "2021"
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+description = "Sign-in, sign-up, logout, and password-reset routes under /auth"
+
+[dependencies]
+leptos = { workspace = true }
+leptos_meta = { workspace = true }
+leptos_router = { workspace = true }
+leptos_axum = { workspace = true, optional = true }
+axum = { workspace = true, optional = true }
+icondata = { workspace = true }
+icondata_core = { workspace = true }
+turf = { workspace = true }
+http = { workspace = true }
+cfg-if = { workspace = true }
+url = { workspace = true }
+urlencoding = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true, optional = true }
+axum-login = { workspace = true, optional = true }
+tower-sessions = { workspace = true, optional = true }
+argon2 = { workspace = true, optional = true }
+password-hash = { workspace = true, optional = true }
+rand_core = { workspace = true, optional = true }
+valence = { workspace = true, optional = true }
+chrono = { workspace = true, optional = true }
+async-trait = { workspace = true, optional = true }
+higgs = { workspace = true, optional = true }
+inventory = { workspace = true, optional = true }
+
+uf-product = { workspace = true, default-features = false }
+uf-integrations = { workspace = true, default-features = false }
+uf-product-macros = { workspace = true }
+lepton-auth = { workspace = true, default-features = false }
+lepton-auth-ui = { workspace = true, default-features = false }
+lepton-shell = { workspace = true, default-features = false }
+orbital-core-components = { workspace = true }
+orbital-macros = { workspace = true }
+
+[lints]
+workspace = true
+
+[features]
+default = []
+oauth-google = ["lepton-auth/oauth-google", "lepton-auth-ui/oauth-google"]
+oauth-github = ["lepton-auth/oauth-github", "lepton-auth-ui/oauth-github"]
+hydrate = [
+    "leptos/hydrate",
+    "uf-product/hydrate",
+    "uf-integrations/hydrate",
+    "lepton-auth/hydrate",
+    "lepton-auth-ui/hydrate",
+    "lepton-shell/hydrate"]
+ssr = [
+    "leptos/ssr",
+    "leptos_meta/ssr",
+    "leptos_router/ssr",
+    "dep:leptos_axum",
+    "dep:tokio",
+    "dep:axum",
+    "dep:axum-login",
+    "dep:tower-sessions",
+    "dep:argon2",
+    "dep:password-hash",
+    "dep:rand_core",
+    "dep:valence",
+    "dep:chrono",
+    "dep:async-trait",
+    "dep:higgs",
+    "dep:inventory",
+    "higgs/ssr",
+    "uf-product/ssr",
+    "uf-integrations/ssr",
+    "lepton-auth/ssr",
+    "lepton-auth-ui/ssr",
+    "lepton-shell/ssr"]
+
+[package.metadata.turf]
+minify = true
+load_paths = ["src/styles"]
+
+[package.metadata.turf.class_names]
+template = "<original_name>-<name_hash_short>"
+excludes = ["thaw-.*"]
+
+[package.metadata.turf-dev]
+minify = false
