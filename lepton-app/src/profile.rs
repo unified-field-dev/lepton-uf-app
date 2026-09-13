@@ -3,7 +3,7 @@ use crate::profile_photo_upload::ProfilePhotoUpload;
 use leptos::prelude::*;
 use leptos_router::hooks::use_navigate;
 use serde::{Deserialize, Serialize};
-use uf_product::components::{Card, ContentContainer, Subtitle2, Title3};
+use uf_product::components::{Card, CardContent, ContentContainer, Subtitle2, Title3};
 use uf_product::primitives::*;
 use uf_product::{use_auth_context, use_auth_state};
 
@@ -69,7 +69,7 @@ pub async fn get_my_profile() -> Result<ProfileData, ServerFnError> {
     let user_email = user.email.clone();
     let v = user_valence(&ctx)?;
 
-    let existing = UserProfile::query(&v)
+    let existing = UserProfile::query_used(&v, valence::use_!("query UserProfile in lepton-app/src/profile.rs; Valence persistence for this feature path; typed store; visible to session actor / service path."))
         .where_user(RecordPredicate::Equals(user_thing.clone()))
         .first()
         .await
@@ -88,7 +88,7 @@ pub async fn get_my_profile() -> Result<ProfileData, ServerFnError> {
             )
             .map_err(|_| profile_server_err("profile_build", "failed to build profile"))?;
 
-            UserProfile::create(new_profile, &v)
+            UserProfile::create_used(new_profile, &v, valence::use_!("create UserProfile in lepton-app/src/profile.rs; Valence persistence for this feature path; typed store; visible to session actor / service path."))
                 .await
                 .map_err(|_| profile_server_err("profile_create", "failed to create profile"))?
         }
@@ -133,7 +133,7 @@ pub async fn update_my_profile(display_name: String) -> Result<(), ServerFnError
     let user_thing = user.id.clone();
     let v = user_valence(&ctx)?;
 
-    let profile = UserProfile::query(&v)
+    let profile = UserProfile::query_used(&v, valence::use_!("query UserProfile in lepton-app/src/profile.rs; Valence persistence for this feature path; typed store; visible to session actor / service path."))
         .where_user(RecordPredicate::Equals(user_thing))
         .first()
         .await
@@ -141,7 +141,7 @@ pub async fn update_my_profile(display_name: String) -> Result<(), ServerFnError
         .ok_or_else(|| profile_server_err("profile_missing", "profile not found"))?;
 
     profile
-        .get_mutable(&v)
+        .get_mutable_used(&v, valence::use_!("get_mutable via profile.rs; mutable handle for in-place update; typed store; session/service path."))
         .set_display_name(display_name)
         .map_err(|_| profile_server_err("profile_validate", "display name rejected"))?
         .commit()
@@ -221,12 +221,12 @@ pub fn ProfilePage() -> impl IntoView {
                                     view! {
                                         <Flex vertical=true gap=FlexGap::Large>
                                             <Card>
+                                                <CardContent>
                                                 <div data-testid="profile-photo-section">
                                                 <Flex
                                                     vertical=true
                                                     align=FlexAlign::Center
                                                     gap=FlexGap::Medium
-                                                    padding=SpacingInset::all_l()
                                                 >
                                                     <Subtitle2>"Profile photo"</Subtitle2>
                                                     <ProfilePhotoDisplay
@@ -239,11 +239,13 @@ pub fn ProfilePage() -> impl IntoView {
                                                     />
                                                 </Flex>
                                                 </div>
+                                                </CardContent>
                                             </Card>
 
                                             <ActionForm action=update_action>
                                                 <Card>
-                                                    <Flex vertical=true gap=FlexGap::Medium padding=SpacingInset::all_l()>
+                                                    <CardContent>
+                                                    <Flex vertical=true gap=FlexGap::Medium>
                                                         <Subtitle2>"Display name"</Subtitle2>
                                                         <div data-testid="profile-display-name">
                                                             <Field label="Display Name" required=true>
@@ -265,6 +267,7 @@ pub fn ProfilePage() -> impl IntoView {
                                                             </Flex>
                                                         </div>
                                                     </Flex>
+                                                    </CardContent>
                                                 </Card>
                                             </ActionForm>
                                         </Flex>
