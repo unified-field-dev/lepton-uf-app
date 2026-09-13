@@ -69,7 +69,7 @@ pub async fn get_my_profile() -> Result<ProfileData, ServerFnError> {
     let user_email = user.email.clone();
     let v = user_valence(&ctx)?;
 
-    let existing = UserProfile::query_used(&v, valence::use_!("query UserProfile in lepton-app/src/profile.rs; Valence persistence for this feature path; typed store; visible to session actor / service path."))
+    let existing = UserProfile::query_used(&v, valence::use_!(r#"On your **account profile** page we **load your display name and profile photo reference** so you can view and edit them. If you have never opened this page, we **create a profile** from your account email first. The photo file itself is fetched through the files API when a photo is set."#))
         .where_user(RecordPredicate::Equals(user_thing.clone()))
         .first()
         .await
@@ -88,7 +88,7 @@ pub async fn get_my_profile() -> Result<ProfileData, ServerFnError> {
             )
             .map_err(|_| profile_server_err("profile_build", "failed to build profile"))?;
 
-            UserProfile::create_used(new_profile, &v, valence::use_!("create UserProfile in lepton-app/src/profile.rs; Valence persistence for this feature path; typed store; visible to session actor / service path."))
+            UserProfile::create_used(new_profile, &v, valence::use_!(r#"On your **account profile** page, if you have never opened it before, we **create a profile** from your account email so you can set a **display name** and photo. You use this on the profile page."#))
                 .await
                 .map_err(|_| profile_server_err("profile_create", "failed to create profile"))?
         }
@@ -133,7 +133,7 @@ pub async fn update_my_profile(display_name: String) -> Result<(), ServerFnError
     let user_thing = user.id.clone();
     let v = user_valence(&ctx)?;
 
-    let profile = UserProfile::query_used(&v, valence::use_!("query UserProfile in lepton-app/src/profile.rs; Valence persistence for this feature path; typed store; visible to session actor / service path."))
+    let profile = UserProfile::query_used(&v, valence::use_!(r#"On your **account profile** page we **load your display name and profile photo reference** so you can view and edit them. If you have never opened this page, we **create a profile** from your account email first. The photo file itself is fetched through the files API when a photo is set."#))
         .where_user(RecordPredicate::Equals(user_thing))
         .first()
         .await
@@ -141,7 +141,7 @@ pub async fn update_my_profile(display_name: String) -> Result<(), ServerFnError
         .ok_or_else(|| profile_server_err("profile_missing", "profile not found"))?;
 
     profile
-        .get_mutable_used(&v, valence::use_!("get_mutable via profile.rs; mutable handle for in-place update; typed store; session/service path."))
+        .get_mutable_used(&v, valence::use_!(r#"When you save on **account profile**, we **update your display name** on your profile record so the page shows what you just entered. Only you use this change on your profile; it is not published as a directory listing to other people from this save alone."#))
         .set_display_name(display_name)
         .map_err(|_| profile_server_err("profile_validate", "display name rejected"))?
         .commit()
