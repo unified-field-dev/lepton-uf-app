@@ -4,6 +4,8 @@
 //! `lepton-auth-app` when host integration deps are mid-churn. Domain happy/sad
 //! for wipe / TOTP / OAuth / confirm stay in the lepton kit.
 
+#![allow(clippy::expect_used)]
+
 use std::fs;
 use std::path::PathBuf;
 
