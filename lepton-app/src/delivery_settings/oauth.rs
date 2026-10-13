@@ -17,12 +17,13 @@ pub fn OAuthCard(
     view: OAuthSettingsView,
     /// Bumped after a successful save so the page reloads.
     reload: RwSignal<u32>,
+    /// Result line; owned by the page so it survives the reload after a save.
+    outcome: RwSignal<Option<Outcome>>,
 ) -> impl IntoView {
     let google_id = RwSignal::new(view.google.client_id.clone());
     let github_id = RwSignal::new(view.github.client_id.clone());
     let google_secret = RwSignal::new(String::new());
     let github_secret = RwSignal::new(String::new());
-    let outcome = RwSignal::new(None::<Outcome>);
     let error = RwSignal::new(None::<String>);
 
     Effect::new(move |_| {

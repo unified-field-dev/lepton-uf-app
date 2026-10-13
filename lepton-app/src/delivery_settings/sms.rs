@@ -34,6 +34,8 @@ pub fn SmsCard(
     view: SmsSettingsView,
     /// Bumped after a successful save so the page reloads.
     reload: RwSignal<u32>,
+    /// Result line; owned by the page so it survives the reload after a save.
+    outcome: RwSignal<Option<Outcome>>,
 ) -> impl IntoView {
     let secret_status = RwSignal::new(view.twilio_api_secret.clone());
     let mode = RwSignal::new(Some(mode_name(view.mode).to_string()));
@@ -43,7 +45,6 @@ pub fn SmsCard(
     let from = RwSignal::new(view.twilio_from.clone());
     let secret = RwSignal::new(String::new());
     let recipient = RwSignal::new(String::new());
-    let outcome = RwSignal::new(None::<Outcome>);
     let error = RwSignal::new(None::<String>);
     let busy = RwSignal::new(false);
 

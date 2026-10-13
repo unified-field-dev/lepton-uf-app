@@ -43,6 +43,8 @@ pub fn EmailCard(
     view: EmailSettingsView,
     /// Bumped after a successful save so the page reloads.
     reload: RwSignal<u32>,
+    /// Result line; owned by the page so it survives the reload after a save.
+    outcome: RwSignal<Option<Outcome>>,
 ) -> impl IntoView {
     let smtp_password_status = RwSignal::new(view.smtp_password.clone());
     let sendgrid_key_status = RwSignal::new(view.sendgrid_api_key.clone());
@@ -60,7 +62,6 @@ pub fn EmailCard(
     let smtp_password = RwSignal::new(String::new());
     let sendgrid_key = RwSignal::new(String::new());
     let recipient = RwSignal::new(String::new());
-    let outcome = RwSignal::new(None::<Outcome>);
     let error = RwSignal::new(None::<String>);
     let busy = RwSignal::new(false);
 

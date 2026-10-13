@@ -16,8 +16,9 @@ pub fn TotpKeyCard(
     view: TotpKeyView,
     /// Bumped after a successful rotation so the page reloads.
     reload: RwSignal<u32>,
+    /// Result line; owned by the page so it survives the reload after a save.
+    outcome: RwSignal<Option<Outcome>>,
 ) -> impl IntoView {
-    let outcome = RwSignal::new(None::<Outcome>);
     let error = RwSignal::new(None::<String>);
     Effect::new(move |_| {
         if let Some(message) = error.get() {

@@ -110,7 +110,9 @@ pub fn friendly_error(raw: &str) -> String {
 
 /// True when a load error means the viewer lacks the permission.
 fn is_denied(raw: &str) -> bool {
-    raw.contains("LeptonManageDelivery") || raw.contains("reason_class=permission_denied")
+    // The server-function gate answers `permission_denied::<name>`; the backend
+    // answers `reason_class=permission_denied`. A failed check is a load error.
+    raw.contains("permission_denied")
 }
 
 /// `/user/delivery` page.
@@ -119,6 +121,11 @@ fn is_denied(raw: &str) -> bool {
 #[component]
 pub fn DeliverySettingsPage() -> impl IntoView {
     let reload = RwSignal::new(0u32);
+    // Result lines live here so a save's reload does not wipe them.
+    let email_outcome = RwSignal::new(None::<Outcome>);
+    let sms_outcome = RwSignal::new(None::<Outcome>);
+    let oauth_outcome = RwSignal::new(None::<Outcome>);
+    let totp_outcome = RwSignal::new(None::<Outcome>);
     let settings = Resource::new(move || reload.get(), |_| get_delivery_settings());
 
     view! {
@@ -133,10 +140,10 @@ pub fn DeliverySettingsPage() -> impl IntoView {
                     {move || settings.get().map(|result| match result {
                         Ok(view) => view! {
                             <Flex vertical=true gap=FlexGap::Large>
-                                <EmailCard view=view.email.clone() reload=reload />
-                                <SmsCard view=view.sms.clone() reload=reload />
-                                <OAuthCard view=view.oauth.clone() reload=reload />
-                                <TotpKeyCard view=view.totp_key.clone() reload=reload />
+                                <EmailCard view=view.email.clone() reload=reload outcome=email_outcome />
+                                <SmsCard view=view.sms.clone() reload=reload outcome=sms_outcome />
+                                <OAuthCard view=view.oauth.clone() reload=reload outcome=oauth_outcome />
+                                <TotpKeyCard view=view.totp_key.clone() reload=reload outcome=totp_outcome />
                             </Flex>
                         }.into_any(),
                         Err(e) if is_denied(&e.to_string()) => view! {
@@ -167,7 +174,8 @@ mod tests {
 
     #[test]
     fn denied_is_recognized_from_the_gate_payload_and_the_backend_class() {
-        assert!(is_denied("permission denied: LeptonManageDelivery"));
+        assert!(is_denied("ServerError|permission_denied::LeptonManageDelivery"));
+        assert!(!is_denied("ServerError|permission_check_failed::LeptonManageDelivery"));
         assert!(is_denied("reason_class=permission_denied: not allowed"));
         assert!(!is_denied("reason_class=store: settings store failed"));
     }
