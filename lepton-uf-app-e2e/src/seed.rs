@@ -40,8 +40,10 @@ pub async fn delivery_admin(
     use axum::http::StatusCode;
     use valence::Model;
 
-    let Ok(system) = system_valence(Arc::clone(&state.valence_router), &state.default_backend_key)
-    else {
+    let Ok(system) = system_valence(
+        Arc::clone(&state.valence_router),
+        &state.default_backend_key,
+    ) else {
         return StatusCode::INTERNAL_SERVER_ERROR;
     };
     let group = gauge::generated::PermissionGroup::get(

@@ -174,8 +174,12 @@ mod tests {
 
     #[test]
     fn denied_is_recognized_from_the_gate_payload_and_the_backend_class() {
-        assert!(is_denied("ServerError|permission_denied::LeptonManageDelivery"));
-        assert!(!is_denied("ServerError|permission_check_failed::LeptonManageDelivery"));
+        assert!(is_denied(
+            "ServerError|permission_denied::LeptonManageDelivery"
+        ));
+        assert!(!is_denied(
+            "ServerError|permission_check_failed::LeptonManageDelivery"
+        ));
         assert!(is_denied("reason_class=permission_denied: not allowed"));
         assert!(!is_denied("reason_class=store: settings store failed"));
     }

@@ -233,15 +233,30 @@ fn seed_lab_env_defaults() {
         ("UF_SMTP_USE_TLS", "0"),
         ("UF_EMAIL_FROM", "noreply@example.test"),
         ("UF_EMAIL_FROM_NAME", "Lepton Auth"),
-        ("UF_SENDGRID_API_BASE_URL", "http://127.0.0.1:3140/mock/sendgrid"),
-        ("UF_TWILIO_API_BASE_URL", "http://127.0.0.1:3140/mock/twilio"),
-        ("UF_TWILIO_ACCOUNT_SID", "ACe2e00000000000000000000000000000"),
+        (
+            "UF_SENDGRID_API_BASE_URL",
+            "http://127.0.0.1:3140/mock/sendgrid",
+        ),
+        (
+            "UF_TWILIO_API_BASE_URL",
+            "http://127.0.0.1:3140/mock/twilio",
+        ),
+        (
+            "UF_TWILIO_ACCOUNT_SID",
+            "ACe2e00000000000000000000000000000",
+        ),
         ("UF_TWILIO_API_KEY", "SKe2e00000000000000000000000000000"),
         ("UF_TWILIO_API_SECRET", "lab-initial-twilio-secret"),
-        ("UF_TWILIO_VERIFY_SERVICE_SID", "VAe2e00000000000000000000000000000"),
+        (
+            "UF_TWILIO_VERIFY_SERVICE_SID",
+            "VAe2e00000000000000000000000000000",
+        ),
         ("UF_OAUTH_USE_MOCK", "1"),
         // Lab-only vault master key (64 hex zeros). Never reuse outside this host.
-        ("NEUTRINO_MASTER_KEY", "0000000000000000000000000000000000000000000000000000000000000000"),
+        (
+            "NEUTRINO_MASTER_KEY",
+            "0000000000000000000000000000000000000000000000000000000000000000",
+        ),
     ];
     for (key, value) in DEFAULTS {
         if std::env::var_os(key).is_none() {
@@ -290,7 +305,10 @@ pub async fn boot_platform() -> anyhow::Result<(
     register_backend_logical_names_slices(
         &mut router,
         Arc::clone(&backend),
-        &[&["default"], neutrino::embedded_surreal::EMBEDDED_SURREAL_LOGICAL_NAMES],
+        &[
+            &["default"],
+            neutrino::embedded_surreal::EMBEDDED_SURREAL_LOGICAL_NAMES,
+        ],
         RegisterBackendLogicalNamesOptions {
             register_alias_engine_id: Some(SQLITE_ENGINE_ID),
         },

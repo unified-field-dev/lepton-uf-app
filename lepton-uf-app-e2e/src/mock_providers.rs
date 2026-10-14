@@ -97,8 +97,14 @@ async fn twilio_verifications(
         authorization: authorization(&headers),
         to: to.clone(),
     });
-    if let Some(status) = mock.failure_for("twilio").and_then(|s| StatusCode::from_u16(s).ok()) {
-        return (status, Json(serde_json::json!({ "code": 20003, "message": "lab failure" })));
+    if let Some(status) = mock
+        .failure_for("twilio")
+        .and_then(|s| StatusCode::from_u16(s).ok())
+    {
+        return (
+            status,
+            Json(serde_json::json!({ "code": 20003, "message": "lab failure" })),
+        );
     }
     // Forward to the SMS sink so OTP assertions that read it keep working.
     let payload = serde_json::json!({
@@ -113,7 +119,10 @@ async fn twilio_verifications(
             .send()
             .await;
     }
-    (StatusCode::CREATED, Json(serde_json::json!({ "sid": "VElab" })))
+    (
+        StatusCode::CREATED,
+        Json(serde_json::json!({ "sid": "VElab" })),
+    )
 }
 
 async fn list_calls(Extension(mock): Extension<Arc<MockProviders>>) -> Json<Vec<Call>> {
@@ -161,5 +170,8 @@ where
         )
         .route("/api/test/mock-providers", get(list_calls))
         .route("/api/test/mock-providers/reset", post(reset))
-        .route("/api/test/mock-providers/fail/{provider}/{status}", post(fail))
+        .route(
+            "/api/test/mock-providers/fail/{provider}/{status}",
+            post(fail),
+        )
 }
