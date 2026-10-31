@@ -8,6 +8,9 @@ use crate::appearance::AppearancePage;
 use crate::confirm_account::ConfirmAccountPage;
 use crate::delivery_settings::DeliverySettingsPage;
 use crate::profile::ProfilePage;
+use crate::service_users::{
+    CreateServiceUserPage, ServiceUserDetailPage, ServiceUserTokenPage, ServiceUsersPage,
+};
 
 /// Prefetch the user settings family WASM chunk (leaf pages share split modules).
 pub async fn prefetch_family() {
@@ -98,6 +101,86 @@ impl LazyRoute for DeliverySettingsRoute {
         view! {
             <uf_product::routes::RequireAuthenticated>
                 <DeliverySettingsPage />
+            </uf_product::routes::RequireAuthenticated>
+        }
+        .into_any()
+    }
+}
+
+/// Lazy `/user/service-users` page.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct ServiceUsersRoute;
+
+#[lazy_route]
+impl LazyRoute for ServiceUsersRoute {
+    fn data() -> Self {
+        Self
+    }
+
+    fn view(_this: Self) -> AnyView {
+        view! {
+            <uf_product::routes::RequireAuthenticated>
+                <ServiceUsersPage />
+            </uf_product::routes::RequireAuthenticated>
+        }
+        .into_any()
+    }
+}
+
+/// Lazy `/user/service-users/new` page.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct ServiceUserNewRoute;
+
+#[lazy_route]
+impl LazyRoute for ServiceUserNewRoute {
+    fn data() -> Self {
+        Self
+    }
+
+    fn view(_this: Self) -> AnyView {
+        view! {
+            <uf_product::routes::RequireAuthenticated>
+                <CreateServiceUserPage />
+            </uf_product::routes::RequireAuthenticated>
+        }
+        .into_any()
+    }
+}
+
+/// Lazy `/user/service-users/{service_user_id}` page.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct ServiceUserDetailRoute;
+
+#[lazy_route]
+impl LazyRoute for ServiceUserDetailRoute {
+    fn data() -> Self {
+        Self
+    }
+
+    fn view(_this: Self) -> AnyView {
+        view! {
+            <uf_product::routes::RequireAuthenticated>
+                <ServiceUserDetailPage />
+            </uf_product::routes::RequireAuthenticated>
+        }
+        .into_any()
+    }
+}
+
+/// Lazy `/user/service-users/{service_user_id}/token` page.
+#[derive(Clone, Copy, Debug, Default)]
+pub struct ServiceUserTokenRoute;
+
+#[lazy_route]
+impl LazyRoute for ServiceUserTokenRoute {
+    fn data() -> Self {
+        Self
+    }
+
+    fn view(_this: Self) -> AnyView {
+        view! {
+            <uf_product::routes::RequireAuthenticated>
+                <ServiceUserTokenPage />
             </uf_product::routes::RequireAuthenticated>
         }
         .into_any()

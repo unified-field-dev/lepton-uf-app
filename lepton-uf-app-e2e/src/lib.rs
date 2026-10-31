@@ -12,6 +12,8 @@ pub mod mock_providers;
 pub mod permissions;
 #[cfg(feature = "ssr")]
 pub mod seed;
+#[cfg(feature = "ssr")]
+pub mod service_users;
 
 pub use app::{shell, App};
 

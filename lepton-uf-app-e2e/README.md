@@ -44,7 +44,8 @@ yourself. Anything that reads a code out of email needs it up first: the confirm
 funnel, email change, and password reset.
 
 ```bash
-docker compose -f ../../../L1-host-stack-kits/lepton/infra/mailpit/docker-compose.yml up -d
+# From a lepton checkout (https://github.com/unified-field-dev/lepton):
+docker compose -f infra/mailpit/docker-compose.yml up -d
 ```
 
 Delivery is synchronous. No Boson runtime is installed, so a code is readable from
@@ -76,7 +77,7 @@ npm run test:headed
 
 `POST /api/test/seed-data` is mounted for the harness only. Never mount it on a
 production host. Scenarios and builders live in
-[`lepton-test-support`](../../../L1-host-stack-kits/lepton/lepton-test-support/):
+[`lepton-test-support`](https://github.com/unified-field-dev/lepton/tree/main/lepton-test-support):
 `auth_basic_user`, `auth_unverified_user`, `auth_confirm_*`, `auth_reset_token`,
 `auth_user_with_totp`, and siblings.
 
@@ -100,6 +101,7 @@ Shared Playwright helpers live in [`end2end/shared/`](end2end/shared/) (`seedTes
 | `totp_enroll.spec.ts` | `pw-totp-enroll-happy`, `pw-totp-enroll-bad-code-sad` |
 | `oauth_link_settings.spec.ts` | `pw-oauth-link-google-happy`, `pw-oauth-link-account-taken-sad` |
 | `delivery_settings.spec.ts` | `pw-lepton-delivery-settings-happy`, `pw-lepton-delivery-settings-denied-sad`, `pw-lepton-delivery-settings-test-send-failed-sad`, `pw-lepton-delivery-settings-stepup-sad` |
+| `service-users.spec.ts` | `pw-lepton-service-users-list-empty-happy`, `pw-lepton-service-users-no-permission-sad`, `pw-lepton-service-users-anonymous-sad`, `pw-lepton-service-users-create-full-happy`, `pw-lepton-service-users-reveal-once-happy`, `pw-lepton-service-users-handle-clash-sad`, `pw-lepton-service-users-handle-invalid-sad`, `pw-lepton-service-users-profile-empty-name-sad`, `pw-lepton-service-users-access-not-grantable-sad`, `pw-lepton-service-users-quota-sad`, `pw-lepton-service-users-token-limit-sad`, `pw-lepton-service-users-foreign-service-user-sad`, `pw-lepton-service-users-suspended-service-user-sad`, `pw-lepton-service-users-dark-mode`, `pw-lepton-service-users-mobile-390`, `pw-lepton-service-users-keyboard-create` |
 
 ## Sign-in and delivery
 
@@ -119,6 +121,26 @@ Lab-only routes, never mounted on a production host:
 | `GET /api/test/mock-providers` | What the mocks received |
 | `POST /api/test/mock-providers/reset` and `.../fail/{provider}/{status}` | Clear the record; make a provider answer with a status |
 
+## Service users
+
+The Service users pages (`/user/service-users`) run against Gauge's service user gate, a "Spectra readers"
+group with no owners, and an in-memory token store in `src/service_users.rs`. The token
+store hands out random `labtk_` secrets and counts them per service user; it stands in
+for a host's real token service, which a host covers in its own tests. Group
+grants go through Gauge for real, so only a super user can put a service user in Spectra
+readers here, and that asks for an authenticator code.
+
+Accessibility checks run axe (`@axe-core/playwright`, WCAG 2 A and AA) on the
+list, each create step and the token reveal, in light and dark mode. Dark mode
+is set through the Appearance page, because Orbital doesn't follow the
+browser's color scheme.
+
+Lab-only route, never mounted on a production host:
+
+| Route | Role |
+|-------|------|
+| `POST /api/test/service-users` | `join_creators` and `super_user` (by email), `seed_service_users` (create and optionally pause service users for a user), `seed_tokens` (pretend a service user has N tokens), `in_readers` (is a service user in Spectra readers) |
+
 `pw-account-change-email-happy` requires Mailpit and asserts “Verification sent…” plus a message to the new address.
 
 Profile photos use `POST/GET /api/files/*` on this host (`LocalDiskBlobStore` under `uploads/`).
@@ -128,7 +150,7 @@ from the session (see workspace README Security → Host duties).
 ## Deferred to the kit (do not re-prove here)
 
 Primary coverage for these stays in
-[`lepton-auth-ui-e2e/end2end/tests/`](../../../L1-host-stack-kits/lepton/lepton-auth-ui-e2e/end2end/tests/):
+[`lepton-auth-ui-e2e/end2end/tests/`](https://github.com/unified-field-dev/lepton/tree/main/lepton-auth-ui-e2e/end2end/tests):
 
 | Concern | Kit scenario / spec |
 |---------|---------------------|
